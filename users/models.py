@@ -3,6 +3,10 @@ from django.db import models
 
 
 class User(AbstractUser):
+    email = models.EmailField(
+        unique=True,
+        verbose_name='email'
+    )
 
     phone = models.CharField(
         max_length=35,
