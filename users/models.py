@@ -3,6 +3,9 @@ from django.db import models
 
 
 class User(AbstractUser):
+
+    username = None
+
     email = models.EmailField(unique=True, verbose_name="email")
 
     phone = models.CharField(
