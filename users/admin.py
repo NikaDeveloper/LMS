@@ -4,7 +4,7 @@ from .models import User, Payment
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'phone', 'is_staff')
+    list_display = ('id', 'email', 'phone', 'is_staff')
     search_fields = ('email', 'phone')
 
 
