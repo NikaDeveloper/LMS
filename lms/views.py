@@ -24,6 +24,9 @@ class CourseViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated]
         return [permission() for permission in self.permission_classes]
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 
 class LessonViewSet(viewsets.ModelViewSet):
     queryset = Lesson.objects.all()
@@ -41,3 +44,6 @@ class LessonViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated]
 
         return [permission() for permission in self.permission_classes]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
