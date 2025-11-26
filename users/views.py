@@ -3,6 +3,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from .permissions import IsOwnerOrReadOnly
 from .models import User, Payment
 from .serializers import UserProfileSerializer, PaymentSerializer, UserRegisterSerializer
 
@@ -21,6 +22,8 @@ class UserProfileRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
     lookup_field = "pk"
+
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
 
 class PaymentListAPIView(generics.ListAPIView):
