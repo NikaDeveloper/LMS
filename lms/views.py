@@ -10,17 +10,23 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:  # Просмотр доступен всем авторизованным
+        if self.action in ["list", "retrieve"]:  # Просмотр доступен всем авторизованным
             self.permission_classes = [IsAuthenticated]
 
-        elif self.action in ['update', 'partial_update']:  # Редактирование разрешено только модерам или владельцам
+        elif self.action in [
+            "update",
+            "partial_update",
+        ]:  # Редактирование разрешено только модерам или владельцам
             self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
 
-        elif self.action == 'create':
+        elif self.action == "create":
             # Создавать могут все авторизованные, КРОМЕ модераторов
-            self.permission_classes = [IsAuthenticated, ~IsModerator]  # ('~' - логическое НЕ)
+            self.permission_classes = [
+                IsAuthenticated,
+                ~IsModerator,
+            ]  # ('~' - логическое НЕ)
 
-        elif self.action == 'destroy':
+        elif self.action == "destroy":
             # Удалять могут ТОЛЬКО владельцы (НЕ модераторы)
             self.permission_classes = [IsAuthenticated, IsOwner, ~IsModerator]
 
@@ -37,17 +43,20 @@ class LessonViewSet(viewsets.ModelViewSet):
     serializer_class = LessonSerializer
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:  # Просмотр
+        if self.action in ["list", "retrieve"]:  # Просмотр
             self.permission_classes = [IsAuthenticated]
 
-        elif self.action in ['update', 'partial_update']:  # Редактирование
+        elif self.action in ["update", "partial_update"]:  # Редактирование
             # Разрешено: ИЛИ Модератору, ИЛИ Владельцу
             self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
 
-        elif self.action == 'create':
-            self.permission_classes = [IsAuthenticated, ~IsModerator]  # ('~' - логическое НЕ)
+        elif self.action == "create":
+            self.permission_classes = [
+                IsAuthenticated,
+                ~IsModerator,
+            ]  # ('~' - логическое НЕ)
 
-        elif self.action == 'destroy':
+        elif self.action == "destroy":
             self.permission_classes = [IsAuthenticated, IsOwner, ~IsModerator]
 
         else:

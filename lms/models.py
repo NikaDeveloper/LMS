@@ -10,7 +10,13 @@ class Course(models.Model):
     )
     description = models.TextField(blank=True, null=True, verbose_name="Описание")
 
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Владелец')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Владелец",
+    )
 
     def __str__(self):
         return self.title
@@ -32,8 +38,13 @@ class Lesson(models.Model):
     description = models.TextField(blank=True, null=True, verbose_name="Описание")
     video_url = models.URLField(max_length=200, verbose_name="Ссылка на видео")
 
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
-                              verbose_name='Владелец')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Владелец",
+    )
 
     def __str__(self):
         return f"{self.title} ({self.course})"

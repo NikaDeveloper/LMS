@@ -15,8 +15,6 @@ router.register(r"courses", CourseViewSet, basename="course")
 router.register(r"lessons", LessonViewSet, basename="lesson")
 
 
-urlpatterns = [
-
-]
+urlpatterns = []
 
 urlpatterns += router.urls
