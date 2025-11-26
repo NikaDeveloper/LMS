@@ -1,6 +1,8 @@
 from rest_framework import permissions
 
 
+MODERATOR_GROUP_NAME = 'Moderators'
+
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """ Разрешает доступ к объекту, если:
     запрос безопасный (GET, HEAD, OPTIONS) - разрешаем всем,
@@ -10,3 +12,10 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return True
 
         return obj.id == request.user.id
+
+
+class IsModerstor(permissions.BasePermission):
+    """ Разрешает доступ только пользователям из группы Moderators """
+
+    def has_permission(self, request, view):
+        return request.user.groups.filter(name=MODERATOR_GROUP_NAME).exists()
