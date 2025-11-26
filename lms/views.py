@@ -16,9 +16,13 @@ class CourseViewSet(viewsets.ModelViewSet):
         elif self.action in ['update', 'partial_update']:  # Редактирование разрешено только модерам или владельцам
             self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
 
-        elif self.action in ['create', 'destroy']:  # Создание и удаление разреш. только авторизованным,
-            # которые НЕ являются модераторами
+        elif self.action == 'create':
+            # Создавать могут все авторизованные, КРОМЕ модераторов
             self.permission_classes = [IsAuthenticated, ~IsModerator]  # ('~' - логическое НЕ)
+
+        elif self.action == 'destroy':
+            # Удалять могут ТОЛЬКО владельцы (НЕ модераторы)
+            self.permission_classes = [IsAuthenticated, IsOwner, ~IsModerator]
 
         else:
             self.permission_classes = [IsAuthenticated]
@@ -40,9 +44,11 @@ class LessonViewSet(viewsets.ModelViewSet):
             # Разрешено: ИЛИ Модератору, ИЛИ Владельцу
             self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
 
-        elif self.action in ['create', 'destroy']:  # Создание/Удаление
-            # Разрешено: НЕ Модератору
-            self.permission_classes = [IsAuthenticated, ~IsModerator]
+        elif self.action == 'create':
+            self.permission_classes = [IsAuthenticated, ~IsModerator]  # ('~' - логическое НЕ)
+
+        elif self.action == 'destroy':
+            self.permission_classes = [IsAuthenticated, IsOwner, ~IsModerator]
 
         else:
             self.permission_classes = [IsAuthenticated]
