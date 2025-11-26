@@ -2,8 +2,9 @@ from django.core.management.base import BaseCommand
 from users.models import Payment, User
 from lms.models import Course, Lesson
 
+
 class Command(BaseCommand):
-    help = 'Заполняет базу данных тестовыми платежами'
+    help = "Заполняет базу данных тестовыми платежами"
 
     def handle(self, *args, **options):
         user = User.objects.first()
@@ -11,7 +12,9 @@ class Command(BaseCommand):
         lesson = Lesson.objects.first()
 
         if not user:
-            self.stdout.write(self.style.ERROR('Сначала создайте хотя бы одного пользователя!'))
+            self.stdout.write(
+                self.style.ERROR("Сначала создайте хотя бы одного пользователя!")
+            )
             return
 
         payment_list = [
@@ -21,7 +24,7 @@ class Command(BaseCommand):
                 "course": course,
                 "lesson": None,
                 "amount": 15000.00,
-                "payment_method": "transfer"
+                "payment_method": "transfer",
             },
             {
                 "user": user,
@@ -29,7 +32,7 @@ class Command(BaseCommand):
                 "course": None,
                 "lesson": lesson,
                 "amount": 1000.50,
-                "payment_method": "cash"
+                "payment_method": "cash",
             },
         ]
 
@@ -41,10 +44,12 @@ class Command(BaseCommand):
                 defaults={
                     "payment_date": payment_data["payment_date"],
                     "amount": payment_data["amount"],
-                    "payment_method": payment_data["payment_method"]
-                }
+                    "payment_method": payment_data["payment_method"],
+                },
             )
             if created:
-                self.stdout.write(self.style.SUCCESS(f'Платеж создан: {payment}'))
+                self.stdout.write(self.style.SUCCESS(f"Платеж создан: {payment}"))
             else:
-                self.stdout.write(self.style.WARNING(f'Платеж уже существует: {payment}'))
+                self.stdout.write(
+                    self.style.WARNING(f"Платеж уже существует: {payment}")
+                )
