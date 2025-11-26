@@ -5,7 +5,7 @@ from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .permissions import IsOwnerOrReadOnly
 from .models import User, Payment
-from .serializers import UserProfileSerializer, PaymentSerializer, UserRegisterSerializer
+from .serializers import UserProfileSerializer, PaymentSerializer, UserRegisterSerializer, UserPublicProfileSerializer
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -18,12 +18,22 @@ class UserCreateAPIView(generics.CreateAPIView):
 class UserProfileRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     """ GET, PUT, PATCH, DELETE для конкретного профиля по ID.
     Доступ закрыт глобальными настройками (нужен токен) """
-
     queryset = User.objects.all()
-    serializer_class = UserProfileSerializer
-    lookup_field = "pk"
 
+    lookup_field = "pk"
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    def get_serializer_class(self):
+        requested_user_id = int(self.kwargs.get('pk'))
+
+        current_user_id = self.request.user.id
+
+        # Если пользователь смотрит свой профиль - полный доступ
+        if requested_user_id == current_user_id:
+            return UserProfileSerializer
+
+        # Если пользователь смотрит чужой профиль - урезанный доступ
+        return UserPublicProfileSerializer
 
 
 class PaymentListAPIView(generics.ListAPIView):

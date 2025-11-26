@@ -12,9 +12,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
     payments = PaymentSerializer(many=True, read_only=True)
     class Meta:
         model = User
-        # Включаем только поля для просмотра и редактирования
         fields = ("id", "email", "first_name", "last_name", "phone", "city", "avatar", "payments")
         read_only_fields = ("email",)  # Запрещаем менять email через профиль
+
+
+class UserPublicProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "email", "first_name", "phone", "city", "avatar")
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
