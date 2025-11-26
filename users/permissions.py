@@ -14,7 +14,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         return obj.id == request.user.id
 
 
-class IsModerstor(permissions.BasePermission):
+class IsModerator(permissions.BasePermission):
     """ Разрешает доступ только пользователям из группы Moderators """
 
     def has_permission(self, request, view):
