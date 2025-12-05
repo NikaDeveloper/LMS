@@ -8,9 +8,7 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = "__all__"
-        validators = [
-            YouTubeValidator(field='video_url')
-        ]
+        validators = [YouTubeValidator(field="video_url")]
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -22,7 +20,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         # Получаем текущего пользователя из контекста запроса
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request and request.user.is_authenticated:
             # Проверяем, есть ли запись в таблице Subscription
             return Subscription.objects.filter(user=request.user, course=obj).exists()

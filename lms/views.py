@@ -50,7 +50,7 @@ class SubscriptionAPIView(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         # Получаем id курса из тела запроса
-        course_id = request.data.get('course_id')
+        course_id = request.data.get("course_id")
 
         # Получаем объект курса, если нет - 404
         course_item = get_object_or_404(Course, id=course_id)
@@ -61,11 +61,11 @@ class SubscriptionAPIView(APIView):
         # Если подписка есть - удаляем
         if subs_item.exists():
             subs_item.delete()
-            message = 'Подписка удалена'
+            message = "Подписка удалена"
         # Если нет - создаем
         else:
             Subscription.objects.create(user=user, course=course_item)
-            message = 'Подписка добавлена'
+            message = "Подписка добавлена"
 
         return Response({"message": message})
 
