@@ -11,6 +11,7 @@ from .serializers import (
     UserRegisterSerializer,
     UserPublicProfileSerializer,
 )
+from .services import create_stripe_product, create_stripe_price, create_stripe_session
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -53,3 +54,32 @@ class PaymentListAPIView(generics.ListAPIView):
     filterset_fields = ("course", "lesson", "payment_method")
 
     ordering_fields = ("payment_date",)
+
+
+class PaymentCreateAPIView(generics.CreateAPIView):
+    serializer_class = PaymentSerializer
+
+    def perform_create(self, serializer):
+        # Сохраняем платеж в базе, чтоб получить объект payment
+        payment = serializer.save(user=self.request.user)
+
+        # Определяем за что платим (курс или урок) для названия продукта
+        product_name = "Oplata"
+        if payment.course:
+            product_name = payment.course.title
+        elif payment.lesson:
+            product_name = payment.lesson.title
+
+        # Создаем продукт в Stripe
+        product_id = create_stripe_product(product_name)
+
+        # Создаем цену в Stripe
+        price_id = create_stripe_price(product_id, payment.amount)
+
+        # Создаем сессию оплаты и получаем ID сессии и ссылку
+        session_id, payment_link = create_stripe_session(price_id)
+
+        # Сохраняем данные в наш объект платежа
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.save()
