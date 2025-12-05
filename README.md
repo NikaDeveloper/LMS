@@ -5,7 +5,7 @@
 * Язык: Python 3.x
 * Фреймворк: Django 5.x
 * API: Django REST Framework (DRF)
-* База данных: PostgreSQL / SQLite
+* База данных: PostgreSQL
 * Авторизация: JWT (djangorestframework-simplejwt)
 * Тестирование: Unittest, APITestCase
 * Дополнительно: django-filter, Pillow (для изображений)

@@ -1,13 +1,13 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-from django.conf.global_settings import MEDIA_URL, MEDIA_ROOT, AUTH_USER_MODEL
 from dotenv import load_dotenv
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -23,12 +23,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "rest_framework",
     "django_filters",
     "rest_framework_simplejwt",
-    'drf_yasg',
-
+    "drf_yasg",
     "users",
     "lms",
 ]
