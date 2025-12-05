@@ -1,11 +1,26 @@
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
+
 from .models import User, Payment
 
 
 class PaymentSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=CurrentUserDefault(),
+    )
+
     class Meta:
         model = Payment
-        fields = "__all__"
+        fields = (
+            "id",
+            "user",
+            "course",
+            "lesson",
+            "amount",
+            "payment_method",
+            "session_id",
+            "link",
+        )
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
