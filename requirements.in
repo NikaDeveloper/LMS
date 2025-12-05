@@ -1,0 +1,13 @@
+Django
+djangorestframework
+psycopg2-binary
+django-filter
+djangorestframework_simplejwt
+pillow
+python-dotenv
+drf-yasg
+django-cors-headers
+requests
+stripe
+asgiref
+tzdata
