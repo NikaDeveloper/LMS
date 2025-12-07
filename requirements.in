@@ -14,3 +14,4 @@ tzdata
 celery
 redis
 eventlet
+django-celery-beat

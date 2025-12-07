@@ -14,7 +14,9 @@ asgiref==3.11.0
 billiard==4.2.4
     # via celery
 celery==5.6.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   django-celery-beat
 certifi==2025.11.12
     # via requests
 charset-normalizer==3.4.4
@@ -33,18 +35,26 @@ click-repl==0.3.0
     # via celery
 colorama==0.4.6
     # via click
-django==6.0
+cron-descriptor==2.0.6
+    # via django-celery-beat
+django==5.2.9
     # via
     #   -r requirements.in
+    #   django-celery-beat
     #   django-cors-headers
     #   django-filter
+    #   django-timezone-field
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-yasg
+django-celery-beat==2.8.1
+    # via -r requirements.in
 django-cors-headers==4.9.0
     # via -r requirements.in
 django-filter==25.2
     # via -r requirements.in
+django-timezone-field==7.2.1
+    # via django-celery-beat
 djangorestframework==3.16.1
     # via
     #   -r requirements.in
@@ -80,6 +90,8 @@ psycopg2-binary==2.9.11
     # via -r requirements.in
 pyjwt==2.10.1
     # via djangorestframework-simplejwt
+python-crontab==3.3.0
+    # via django-celery-beat
 python-dateutil==2.9.0.post0
     # via celery
 python-dotenv==1.2.1
@@ -101,11 +113,14 @@ sqlparse==0.5.4
 stripe==14.0.1
     # via -r requirements.in
 typing-extensions==4.15.0
-    # via stripe
+    # via
+    #   cron-descriptor
+    #   stripe
 tzdata==2025.2
     # via
     #   -r requirements.in
     #   django
+    #   django-celery-beat
     #   kombu
     #   tzlocal
 tzlocal==5.3.1
