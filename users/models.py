@@ -97,7 +97,7 @@ class Payment(models.Model):
         max_length=255, verbose_name="ID сессии Stripe", blank=True, null=True
     )
     link = models.URLField(
-        max_length=400, verbose_name="Ссылка на оплату", blank=True, null=True
+        max_length=1012, verbose_name="Ссылка на оплату", blank=True, null=True
     )
 
     def __str__(self):
