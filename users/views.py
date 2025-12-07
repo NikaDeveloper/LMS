@@ -1,8 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, get_object_or_404
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework import status
 from .permissions import IsOwnerOrReadOnly
 from .models import User, Payment
 from .serializers import (
@@ -11,7 +14,12 @@ from .serializers import (
     UserRegisterSerializer,
     UserPublicProfileSerializer,
 )
-from .services import create_stripe_product, create_stripe_price, create_stripe_session
+from .services import (
+    create_stripe_product,
+    create_stripe_price,
+    create_stripe_session,
+    check_payment_status,
+)
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -57,11 +65,13 @@ class PaymentListAPIView(generics.ListAPIView):
 
 
 class PaymentCreateAPIView(generics.CreateAPIView):
+    """эндпоинт для создания платежа"""
+
     serializer_class = PaymentSerializer
 
     def perform_create(self, serializer):
         # Сохраняем платеж в базе, чтоб получить объект payment
-        payment = serializer.save(user=self.request.user)
+        payment = serializer.save()
 
         # Определяем за что платим (курс или урок) для названия продукта
         product_name = "Oplata"
@@ -83,3 +93,28 @@ class PaymentCreateAPIView(generics.CreateAPIView):
         payment.session_id = session_id
         payment.link = payment_link
         payment.save()
+
+
+class PaymentRetrieveAPIView(generics.RetrieveAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+
+
+class PaymentStatusAPIView(APIView):
+    """принимает ID платежа, ищет session_id и спрашивает у Stripe статус"""
+
+    def get(self, request, pk):
+        # Получаем платеж по id из базы
+        payment = get_object_or_404(Payment, pk=pk)
+
+        # Если есть session_id, проверяем статус в Stripe
+        if payment.session_id:
+            status_data = check_payment_status(payment.session_id)
+            return Response(
+                data={"status": status_data, "payment_id": payment.pk},
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            data={"error": "У этого платежа нет Stripe session_id."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
