@@ -11,6 +11,9 @@ STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
+REDIS_HOST = os.getenv('REDIS_HOST', '127.0.0.1')
+REDIS_PORT = os.getenv('REDIS_PORT', '6379')
+
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -119,3 +122,20 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
+
+
+# Конфигурация Celery
+# Redis как брокер (транспорт) для передачи зада
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
+
+# Redis как бэкенд для хранения результатов выполнения задач
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/1'
+
+# Часовой пояс для работы Celery
+CELERY_TIMEZONE = "Australia/Tasmania"
+
+# Флаг отслеживания выполнения задач
+CELERY_TASK_TRACK_STARTED = True 
+
+# Максимальное время на выполнение задачи
+CELERY_TASK_TIME_LIMIT = 30 * 60

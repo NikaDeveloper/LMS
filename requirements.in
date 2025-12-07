@@ -11,3 +11,6 @@ requests
 stripe
 asgiref
 tzdata
+celery
+redis
+eventlet
