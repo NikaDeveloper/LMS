@@ -1,3 +1,7 @@
+from datetime import timedelta
+
+from django.utils import timezone
+from .tasks import send_course_update_email
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -42,6 +46,30 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        # Получаем текущий курс до обновления
+        course = serializer.instance
+
+        # Получаем дату последнего обновления (или None, если не было)
+        last_updated = course.updated_at
+
+        # Сохраняем изменения
+        updated_course = serializer.save()
+
+        # Логика рассылки
+        if last_updated:
+            now = timezone.now()
+            # Проверяем, прошло ли 4 часа
+            if now - last_updated > timedelta(hours=4):
+                send_course_update_email.delay(updated_course.pk)
+                print(f"Курс {updated_course.title} обновлен. Задача на отправку писем создана.")
+            else:
+                print(f"Курс {updated_course.title} обновлен. Письма НЕ отправлены (слишком часто).")
+        else:
+            # Если course.updated_at был None (никогда не обновлялся), можно отправить
+            send_course_update_email.delay(updated_course.pk)
+            print("Первое обновление курса. Задача создана.")
 
 
 class SubscriptionAPIView(APIView):
