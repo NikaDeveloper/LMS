@@ -8,13 +8,9 @@ from .models import Course, Subscription
 def send_course_update_email(course_id):
     """ Асинхронная задача для отправки писем об обновлении курса """
     try:
-        # Получаем объект курса
         course = Course.objects.get(pk=course_id)
-
-        # Находим всех пользователей, подписанных на этот курс
         subscriptions = Subscription.objects.filter(course=course)
 
-        # Формируем список email-адресов
         recipient_list = [sub.user.email for sub in subscriptions if sub.user.email]
 
         if recipient_list:
@@ -23,7 +19,7 @@ def send_course_update_email(course_id):
                 message=f'Курс "{course.title}" был обновлен. Зайдите посмотреть новые материалы!',
                 from_email=settings.EMAIL_HOST_USER if hasattr(settings, 'EMAIL_HOST_USER') else 'noreply@lms.com',
                 recipient_list=recipient_list,
-                fail_silently=False,
+                fail_silently=False
             )
             print(f"Письма отправлены подписчикам курса {course.title}")
 
