@@ -209,3 +209,8 @@ __marimo__/
 /media/
 
 .idea
+
+# Celery Beat state files
+celerybeat-schedule
+celerybeat-schedule-shm
+celerybeat-schedule-wal
