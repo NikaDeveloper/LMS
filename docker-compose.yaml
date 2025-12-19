@@ -1,0 +1,70 @@
+services:
+  # 1. Сервис Базы Данных
+  db:
+    image: postgres:14-alpine
+    restart: always
+    container_name: postgres_db
+    env_file:
+      - .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. Сервис Redis (брокер сообщений)
+  redis:
+    image: redis:alpine
+    restart: always
+    container_name: redis_app
+    ports:
+      - "6379:6379"
+
+  # 3. Основное приложение Django
+  app:
+    build: .
+    tty: true
+    container_name: django_app
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - .:/app
+
+  # 4. Celery Worker (выполняет задачи)
+  celery:
+    build: .
+    tty: true
+    container_name: celery_worker
+    command: celery -A config worker -l info
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - app
+
+  # 5. Celery Beat (планировщик задач)
+  celery-beat:
+    build: .
+    tty: true
+    container_name: celery_beat
+    command: celery -A config beat -l info -S django
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - app
+
+volumes:
+  pg_data:
