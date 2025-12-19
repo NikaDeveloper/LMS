@@ -52,66 +52,40 @@
 git clone https://github.com/NikaDeveloper/LMS.git
 cd LMS 
 ```
-2. Создание и активация виртуального окружения
-```Bash
-# Windows
-python -m venv .venv
-.venv\Scripts\activate
+2. Запуск проекта через Docker
 
-# Linux/macOS
-python3 -m venv .venv
-source .venv/bin/activate
-```
-3. Установка зависимостей
+*Для запуска проекта вам понадобится установленный Docker и Docker Compose.*
 
-*Проект использует pip-tools для фиксации версий.*
+* Настройка окружения
+
+*Создайте файл .env в корне проекта и заполните его согласно шаблону **.env.example**. Важно: для работы внутри Docker используйте POSTGRES_HOST=db и REDIS_HOST=redis.*
+
+* Запуск контейнеров
+
+*Выполните команду для сборки и запуска всех сервисов (Django, PostgreSQL, Redis, Celery):*
 
 ```Bash
-pip install -r requirements.txt
+docker-compose up -d --build
 ```
-*(Для разработчиков, желающих установить dev-зависимости):*
+3. Применение миграций
+
 ```Bash
-pip install -r dev-requirements.txt
+docker-compose exec app python manage.py migrate
 ```
-4. Настройка окружения (.env)
+**Создайте суперпользователя:**
 
-*Создайте файл .env в корне проекта и заполните его по образцу .env.example*
-
-5. Применение миграций
 ```Bash
-python manage.py makemigrations
-python manage.py migrate
-```
-6. Настройка прав (Важно!)
-
-Для корректной работы прав доступа необходимо создать группу модераторов. Вы можете сделать это через админ-панель:
-```Bash
-python manage.py createsuperuser
-# Далее зайдите в админку [http://127.0.0.1:8000/admin/]
-# Перейдите в "Groups" -> "Add group" -> Назовите её "Moderators".
-```
-7. Запуск сервера
-```Bash
-python manage.py runserver
-```
-#### *Проект будет доступен по адресу:* http://127.0.0.1:8000/
-
-8. Убедитесь, что Redis запущен
-
-8.1. Запуск Celery Worker (обработчик задач)
-```Bash
-celery -A config worker -l info -P eventlet #windows
-```
-8.2. Запуск Celery Beat (планировщик периодических задач)
-```Bash
-celery -A config beat -l info
+docker-compose exec app python manage.py createsuperuser
 ```
 
-### Документация API
+**Django API:** будет доступен по адресу http://localhost:8000/
 
-*После запуска сервера документация доступна по адресам:*
+**Celery Worker:** выполняет асинхронные задачи (логи можно посмотреть командой *docker logs celery_worker*).
 
-* Swagger UI: https://www.google.com/search?q=http://127.0.0.1:8000/swagger/
-* ReDoc: https://www.google.com/search?q=http://127.0.0.1:8000/redoc/
+**Celery Beat:** отправляет периодические задачи (логи: *docker logs celery_beat*)
+
+**Документация:**
+* http://localhost:8000/swagger/
+* http://localhost:8000/redoc/
 
 *Разработчик: Nika Developer*
