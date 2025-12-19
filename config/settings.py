@@ -11,10 +11,10 @@ STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-REDIS_HOST = os.getenv('REDIS_HOST', '127.0.0.1')
+REDIS_HOST = os.getenv('REDIS_HOST')
 REDIS_PORT = os.getenv('REDIS_PORT', '6379')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = []
 
