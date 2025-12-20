@@ -12,6 +12,3 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Копируем всё остальное из текущей папки в контейнер
 COPY . .
-
-# Команда, которая запускается по умолчанию (запуск сервера)
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
